@@ -1,3 +1,14 @@
+################
+# File: /boilerplates.py
+# Project: app
+# Created Date: Tue Dec 10th 2019
+# Author: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Last Modified: Fri Feb 7th 2020
+# Modified By: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Copyright (c) <<projectCreationYear>> Your Company
+#################
 # pylint: disable=line-too-long
 """
 Boilerplates
@@ -18,7 +29,7 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @task
-def crud_module(context, module_name='', module_name_singular=''):
+def crud_module(context, module_name='', models=[]):
     # pylint: disable=unused-argument
     """
     Create CRUD (Create-Read-Update-Delete) empty module.
@@ -43,8 +54,6 @@ def crud_module(context, module_name='', module_name_singular=''):
         )
         return
 
-    if not module_name_singular:
-        module_name_singular = module_name[:-1]
 
     module_path = 'app/modules/%s' % module_name
 
@@ -54,11 +63,11 @@ def crud_module(context, module_name='', module_name_singular=''):
         ]
     )
 
-    model_name = "".join(
+    model_names = ["".join(
         [word.capitalize()
-            for word in module_name_singular.split('_')
+            for word in model.split('_')
         ]
-    )
+    ) for model in models]
 
     if os.path.exists(module_path):
         log.critical('Module `%s` already exists.', module_name)
@@ -66,26 +75,58 @@ def crud_module(context, module_name='', module_name_singular=''):
 
     os.makedirs(module_path)
 
+    sub_dirs = ['model', 'schema', 'api', 'parameter']
+
+    
+
+    
+
+    for loc in sub_dirs:
+        loc_path = "{}/{}".format(module_path, loc)
+        env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader('tasks/app/boilerplates_templates/crud_module/{}'.format(loc))
+        )   
+        os.makedirs(loc_path)
+
+        template = env.get_template('__init__.py.template')
+        template.stream(
+            module_name=module_name,
+            module_title=module_title,
+            module_namespace=module_name.replace('_', '-'),
+            models = model_names
+        ).dump(
+            '%s/%s.py' % (loc_path, '__init__')
+        )
+
+        for i in range(0, len(models)):
+            template = env.get_template('component.py.template')
+   
+            template.stream(
+                module_name=module_name,
+                module_title=module_title,
+                is_main= i == 0,
+                model_name_singular=models[i],
+                module_namespace=models[i].replace('_', '-'),
+                models = model_names,
+                model_name = model_names[i]
+            ).dump(
+                '%s/%s.py' % (loc_path, models[i].replace('-', '_'))
+            )
+            
+
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader('tasks/app/boilerplates_templates/crud_module')
     )
-    for template_file in (
-        '__init__',
-        'models',
-        'parameters',
-        'resources',
-        'schemas',
-    ):
-        template = env.get_template('%s.py.template' % template_file)
-        template.stream(
-            module_name=module_name,
-            module_name_singular=module_name_singular,
-            module_title=module_title,
-            module_namespace=module_name.replace('_', '-'),
-            model_name=model_name,
-        ).dump(
-            '%s/%s.py' % (module_path, template_file)
-        )
+
+    template = env.get_template('__init__.py.template')
+    template.stream(
+        module_name=module_name,
+        module_title=module_title,
+        module_namespace=module_name.replace('_', '-'),
+        models = model_names
+    ).dump(
+        '%s/%s.py' % (module_path, '__init__')
+    )
 
     log.info("Module `%s` has been created.", module_name)
     print(

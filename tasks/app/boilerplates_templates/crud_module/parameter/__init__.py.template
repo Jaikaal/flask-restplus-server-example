@@ -1,0 +1,9 @@
+# encoding: utf-8
+"""
+{{ module_title }} input arguments (parameters)
+-----------------------------------------------
+"""
+
+{% for model in models %}
+from .{{ model }} import *
+{% endfor %}

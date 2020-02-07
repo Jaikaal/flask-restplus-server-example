@@ -1,13 +1,13 @@
 # encoding: utf-8
 """
-Serialization schemas for {{ module_title }} resources RESTful API
-----------------------------------------------------
+Serialization schemas for {{ model_name }} resource
+---------------------------------------------------
 """
 
 from flask_marshmallow import base_fields
 from flask_restplus_patched import ModelSchema
 
-from .models import {{ model_name }}
+from .model import {{ model_name }}
 
 
 class Base{{ model_name }}Schema(ModelSchema):

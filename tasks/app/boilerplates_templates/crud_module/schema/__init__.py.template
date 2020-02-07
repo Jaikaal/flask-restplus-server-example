@@ -1,0 +1,9 @@
+# encoding: utf-8
+"""
+{{ module_title }} serialization schemas
+----------------------------------------
+"""
+
+{% for model in models %}
+from .{{ model }} import *
+{% endfor %}

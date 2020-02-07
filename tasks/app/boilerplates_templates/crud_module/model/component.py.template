@@ -1,7 +1,7 @@
 # encoding: utf-8
 """
-{{ module_title }} database models
---------------------
+{{ model_name }} database model
+-------------------------------
 """
 
 from sqlalchemy_utils import Timestamp
@@ -11,7 +11,7 @@ from app.extensions import db
 
 class {{ model_name }}(db.Model, Timestamp):
     """
-    {{ module_title }} database model.
+    {{ model_name }} database model.
     """
 
     id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
