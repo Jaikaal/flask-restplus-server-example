@@ -1,9 +1,20 @@
+################
+# File: /config.py
+# Project: flask-restplus-server-example
+# Created Date: Tue Dec 10th 2019
+# Author: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Last Modified: Sat Feb 8th 2020
+# Modified By: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Copyright (c) <<projectCreationYear>> Your Company
+#################
 # pylint: disable=too-few-public-methods,invalid-name,missing-docstring
 import os
 
 
 class BaseConfig(object):
-    SECRET_KEY = 'this-really-needs-to-be-changed'
+    SECRET_KEY = "this-really-needs-to-be-changed"
 
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
@@ -22,19 +33,21 @@ class BaseConfig(object):
     # )
 
     # SQLITE
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///%s' % (os.path.join(PROJECT_ROOT, "example.db"))
+    SQLALCHEMY_DATABASE_URI = "sqlite:///%s" % (
+        os.path.join(PROJECT_ROOT, "example.db")
+    )
 
     DEBUG = False
     ERROR_404_HELP = False
 
-    REVERSE_PROXY_SETUP = os.getenv('EXAMPLE_API_REVERSE_PROXY_SETUP', False)
+    REVERSE_PROXY_SETUP = os.getenv("EXAMPLE_API_REVERSE_PROXY_SETUP", False)
 
     AUTHORIZATIONS = {
-        'oauth2_password': {
-            'type': 'oauth2',
-            'flow': 'password',
-            'scopes': {},
-            'tokenUrl': '/auth/oauth2/token',
+        "oauth2_password": {
+            "type": "oauth2",
+            "flow": "password",
+            "scopes": {},
+            "tokenUrl": "/auth/oauth2/token",
         },
         # TODO: implement other grant types for third-party apps
         #'oauth2_implicit': {
@@ -42,23 +55,24 @@ class BaseConfig(object):
         #    'flow': 'implicit',
         #    'scopes': {},
         #    'authorizationUrl': '/auth/oauth2/authorize',
-        #},
+        # },
     }
 
     ENABLED_MODULES = (
-        'auth',
-
-        'users',
-        'teams',
-
-        'api',
+        "auth",
+        "users",
+        "teams",
+        "site_user",
+        "api",
     )
 
-    STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
+    STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
     SWAGGER_UI_JSONEDITOR = True
-    SWAGGER_UI_OAUTH_CLIENT_ID = 'documentation'
-    SWAGGER_UI_OAUTH_REALM = "Authentication for Flask-RESTplus Example server documentation"
+    SWAGGER_UI_OAUTH_CLIENT_ID = "documentation"
+    SWAGGER_UI_OAUTH_REALM = (
+        "Authentication for Flask-RESTplus Example server documentation"
+    )
     SWAGGER_UI_OAUTH_APP_NAME = "Flask-RESTplus Example server documentation"
 
     # TODO: consider if these are relevant for this project
@@ -67,8 +81,8 @@ class BaseConfig(object):
 
 
 class ProductionConfig(BaseConfig):
-    SECRET_KEY = os.getenv('EXAMPLE_API_SERVER_SECRET_KEY')
-    SQLALCHEMY_DATABASE_URI = os.getenv('EXAMPLE_API_SERVER_SQLALCHEMY_DATABASE_URI')
+    SECRET_KEY = os.getenv("EXAMPLE_API_SERVER_SECRET_KEY")
+    SQLALCHEMY_DATABASE_URI = os.getenv("EXAMPLE_API_SERVER_SQLALCHEMY_DATABASE_URI")
 
 
 class DevelopmentConfig(BaseConfig):
@@ -79,4 +93,4 @@ class TestingConfig(BaseConfig):
     TESTING = True
 
     # Use in-memory SQLite database for testing
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = "sqlite://"

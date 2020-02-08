@@ -7,9 +7,9 @@ Serialization schemas for {{ module_title }} resources RESTful API
 from flask_marshmallow import base_fields
 from flask_restplus_patched import ModelSchema
 
-from .models import {{ model_name }}
+from .models import {{ model_names|join(', ') }}
 
-
+{%for i in range(model_names|count) %}{% set model_name=model_names[i] %}
 class Base{{ model_name }}Schema(ModelSchema):
     """
     Base {{ model_name }} schema exposes only the most general fields.
@@ -41,3 +41,4 @@ class Detailed{{ model_name }}Schema(Base{{ model_name }}Schema):
             {{ model_name }}.created.key,
             {{ model_name }}.updated.key,
         )
+{% endfor %}

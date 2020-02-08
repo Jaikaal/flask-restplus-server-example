@@ -1,3 +1,14 @@
+################
+# File: /boilerplates.py
+# Project: app
+# Created Date: Tue Dec 10th 2019
+# Author: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Last Modified: Sat Feb 8th 2020
+# Modified By: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Copyright (c) <<projectCreationYear>> Your Company
+#################
 # pylint: disable=line-too-long
 """
 Boilerplates
@@ -18,7 +29,7 @@ log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @task
-def crud_module(context, module_name='', module_name_singular=''):
+def crud_module(context, module_name="", models=[]):
     # pylint: disable=unused-argument
     """
     Create CRUD (Create-Read-Update-Delete) empty module.
@@ -29,63 +40,60 @@ def crud_module(context, module_name='', module_name_singular=''):
     try:
         import jinja2
     except ImportError:
-        log.critical("jinja2 is required to create boilerplates. Please, do `pip install jinja2`")
+        log.critical(
+            "jinja2 is required to create boilerplates. Please, do `pip install jinja2`"
+        )
         return
 
     if not module_name:
         log.critical("Module name is required")
         return
 
-    if not re.match('^[a-zA-Z0-9_]+$', module_name):
+    if not re.match("^[a-zA-Z0-9_]+$", module_name):
         log.critical(
             "Module module_name is allowed to contain only letters, numbers and underscores "
             "([a-zA-Z0-9_]+)"
         )
         return
 
-    if not module_name_singular:
-        module_name_singular = module_name[:-1]
+    module_path = "app/modules/%s" % module_name
 
-    module_path = 'app/modules/%s' % module_name
+    module_name = "_".join([word for word in module_name.split("-")])
 
-    module_title = " ".join(
-        [word.capitalize()
-            for word in module_name.split('_')
-        ]
-    )
+    models = ["-".join([word for word in model.split("_")]) for model in models]
 
-    model_name = "".join(
-        [word.capitalize()
-            for word in module_name_singular.split('_')
-        ]
-    )
+    module_title = " ".join([word.capitalize() for word in module_name.split("_")])
+
+    model_names = [
+        "".join([word.capitalize() for word in model_name.split("-")])
+        for model_name in models
+    ]
 
     if os.path.exists(module_path):
-        log.critical('Module `%s` already exists.', module_name)
+        log.critical("Module `%s` already exists.", module_name)
         return
 
     os.makedirs(module_path)
 
     env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader('tasks/app/boilerplates_templates/crud_module')
+        loader=jinja2.FileSystemLoader("tasks/app/boilerplates_templates/crud_module")
     )
     for template_file in (
-        '__init__',
-        'models',
-        'parameters',
-        'resources',
-        'schemas',
+        "__init__",
+        "models",
+        "parameters",
+        "resources",
+        "schemas",
     ):
-        template = env.get_template('%s.py.template' % template_file)
+        template = env.get_template("%s.py.template" % template_file)
         template.stream(
             module_name=module_name,
-            module_name_singular=module_name_singular,
+            module_name_singular=module_name,
             module_title=module_title,
-            module_namespace=module_name.replace('_', '-'),
-            model_name=model_name,
-        ).dump(
-            '%s/%s.py' % (module_path, template_file)
-        )
+            module_namespace=module_name.replace("_", "-"),
+            model_names=model_names,
+            models=models,
+        ).dump("%s/%s.py" % (module_path, template_file))
 
     log.info("Module `%s` has been created.", module_name)
     print(
@@ -98,5 +106,5 @@ def crud_module(context, module_name='', module_name_singular=''):
         "\t'api',\n"
         ")\n\n"
         "You can find your module at `app/modules/` directory"
-        % {'module_name': module_name}
+        % {"module_name": module_name}
     )
