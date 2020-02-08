@@ -4,6 +4,15 @@ RESTful API {{ module_name }} resources
 ---------------------------------------
 """
 
-from app.extensions.api import Namespace
+from app.extensions.api import Namespace, Api
 
-api = Namespace('{{ module_namespace }}', description="{{ module_title }}")  # pylint: disable=invalid-name
+api_ns = Namespace('{{ module_namespace }}', description="{{ module_title }}")  # pylint: disable=invalid-name
+
+def init_api(api: Api):
+    
+    # Touch underlying modules
+    {% for i in range(models|count) %}
+    from . import {{ models[i] }} # pylint: disable=unused-import, import-outside-toplevel
+    {% endfor %}
+
+    api.add_namespace(api_ns)

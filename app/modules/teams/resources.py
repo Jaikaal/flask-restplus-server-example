@@ -1,3 +1,14 @@
+################
+# File: /resources.py
+# Project: teams
+# Created Date: Tue Dec 10th 2019
+# Author: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Last Modified: Fri Feb 7th 2020
+# Modified By: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Copyright (c) <<projectCreationYear>> Your Company
+#################
 # encoding: utf-8
 # pylint: disable=bad-continuation
 """
@@ -22,7 +33,7 @@ from .models import Team, TeamMember
 
 
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
-api = Namespace('teams', description="Teams")  # pylint: disable=invalid-name
+api = Namespace('teamss', description="Teams")  # pylint: disable=invalid-name
 
 
 @api.route('/')

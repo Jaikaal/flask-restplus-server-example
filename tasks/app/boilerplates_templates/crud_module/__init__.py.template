@@ -2,7 +2,7 @@
 """
 {{ module_title }} module
 
-Manages [{%for model in models %}model, {% endfor %}]
+Manages [{%for model in models %} {{ model }}, {% endfor %}]
 ============
 """
 
@@ -18,6 +18,6 @@ def init_app(app, **kwargs):
     api_v1.add_oauth_scope('{{ module_namespace }}:write', "Provide write access to {{ module_title }} details")
 
     # Touch underlying modules
-    from . import models, resources
+    from . import model, api # pylint: disable=unused-import, import-outside-toplevel
 
-    api_v1.add_namespace(resources.api)
+    api.init_api(api_v1)

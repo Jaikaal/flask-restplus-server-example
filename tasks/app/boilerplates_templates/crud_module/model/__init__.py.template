@@ -4,6 +4,6 @@
 ----------------------------------
 """
 
-{% for model in models %}
-from .{{ model }} import *
+{% for i in range(models|count) %}
+from .{{ models[i] }} import {{ model_names[i] }}
 {% endfor %}

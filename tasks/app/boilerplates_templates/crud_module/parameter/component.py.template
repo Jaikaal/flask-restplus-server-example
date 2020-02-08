@@ -7,16 +7,16 @@ Input arguments (Parameters) for {{ model_name }} resource
 from flask_marshmallow import base_fields
 from flask_restplus_patched import PostFormParameters, PatchJSONParameters
 
-from . import schemas
-from .model import {{ model_name }}
+from ..schema import Detailed{{ model_name }}Schema
+from ..model import {{ model_name }}
 
 
-class Create{{ model_name }}Parameters(PostFormParameters, schemas.Detailed{{ model_name }}Schema):
+class Create{{ model_name }}Parameters(PostFormParameters, Detailed{{ model_name }}Schema):
     """
     Input arguments (Parameters) for {{ model_name }} creation.
     """
 
-    class Meta(schemas.Detailed{{ model_name }}Schema.Meta):
+    class Meta(Detailed{{ model_name }}Schema.Meta):
         pass
 
 

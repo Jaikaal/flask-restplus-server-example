@@ -1,3 +1,14 @@
+################
+# File: /config.py
+# Project: flask-restplus-server-example
+# Created Date: Tue Dec 10th 2019
+# Author: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Last Modified: Fri Feb 7th 2020
+# Modified By: Ashok Kumar P (ParokshaX) (ashok@paroksha.com)
+# -----
+# Copyright (c) <<projectCreationYear>> Your Company
+#################
 # pylint: disable=too-few-public-methods,invalid-name,missing-docstring
 import os
 
@@ -50,6 +61,7 @@ class BaseConfig(object):
 
         'users',
         'teams',
+        'site_user',
 
         'api',
     )
