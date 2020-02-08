@@ -18,16 +18,16 @@ from app.modules.users import permissions
 
 
 from . import parameters, schemas
-from .models import {{ model_name }}
+from .models import {{ model_names|join(', ') }}
 
 
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 api = Namespace('{{ module_namespace }}', description="{{ module_title }}")  # pylint: disable=invalid-name
 
-
-@api.route('/')
+{% for i in range(model_names|count) %} {% set model_name = model_names[i] %}
+@api.route('/{% if i > 0 %}{{ models[i] }}{% endif %}')
 @api.login_required(oauth_scopes=['{{ module_namespace }}:read'])
-class {{ module_title.replace(' ', '') }}(Resource):
+class {{ model_name.replace(' ', '') }}s(Resource):
     """
     Manipulations with {{ module_title }}.
     """
@@ -55,36 +55,36 @@ class {{ module_title.replace(' ', '') }}(Resource):
                 db.session,
                 default_error_message="Failed to create a new {{ model_name }}"
             ):
-            {{ module_name_singular }} = {{ model_name }}(**args)
-            db.session.add({{ module_name_singular }})
-        return {{ module_name_singular }}
+            {{ models[i]|replace('-', '_') }} = {{ model_name }}(**args)
+            db.session.add({{ models[i]|replace('-', '_') }})
+        return {{ models[i]|replace('-', '_') }}
 
 
-@api.route('/<int:{{ module_name_singular }}_id>')
+@api.route('/{%if i>0 %}{{ models[i] }}/{% endif %}<int:{{ models[i] }}_id>')
 @api.login_required(oauth_scopes=['{{ module_namespace }}:read'])
 @api.response(
     code=HTTPStatus.NOT_FOUND,
     description="{{ model_name }} not found.",
 )
-@api.resolve_object_by_model({{ model_name }}, '{{ module_name_singular }}')
+@api.resolve_object_by_model({{ model_name }}, '{{ models[i] }}')
 class {{ model_name }}ByID(Resource):
     """
     Manipulations with a specific {{ model_name }}.
     """
 
     @api.response(schemas.Detailed{{ model_name }}Schema())
-    def get(self, {{ module_name_singular }}):
+    def get(self, {{ models[i]|replace('-', '_') }}):
         """
         Get {{ model_name }} details by ID.
         """
-        return {{ module_name_singular }}
+        return {{ models[i]|replace('-', '_') }}
 
     @api.login_required(oauth_scopes=['{{ module_namespace }}:write'])
     @api.permission_required(permissions.WriteAccessPermission())
     @api.parameters(parameters.Patch{{ model_name }}DetailsParameters())
     @api.response(schemas.Detailed{{ model_name }}Schema())
     @api.response(code=HTTPStatus.CONFLICT)
-    def patch(self, args, {{ module_name_singular }}):
+    def patch(self, args, {{ models[i]|replace('-', '_') }}):
         """
         Patch {{ model_name }} details by ID.
         """
@@ -92,15 +92,15 @@ class {{ model_name }}ByID(Resource):
                 db.session,
                 default_error_message="Failed to update {{ model_name }} details."
             ):
-            parameters.Patch{{ model_name }}DetailsParameters.perform_patch(args, obj={{ module_name_singular }})
-            db.session.merge({{ module_name_singular }})
-        return {{ module_name_singular }}
+            parameters.Patch{{ model_name }}DetailsParameters.perform_patch(args, obj={{ models[i]|replace('-', '_') }})
+            db.session.merge({{ models[i]|replace('-', '_') }})
+        return {{ models[i]|replace('-', '_') }}
 
     @api.login_required(oauth_scopes=['{{ module_namespace }}:write'])
     @api.permission_required(permissions.WriteAccessPermission())
     @api.response(code=HTTPStatus.CONFLICT)
     @api.response(code=HTTPStatus.NO_CONTENT)
-    def delete(self, {{ module_name_singular }}):
+    def delete(self, {{ models[i]|replace('-', '_') }}):
         """
         Delete a {{ model_name }} by ID.
         """
@@ -108,5 +108,6 @@ class {{ model_name }}ByID(Resource):
                 db.session,
                 default_error_message="Failed to delete the {{ model_name }}."
             ):
-            db.session.delete({{ module_name_singular }})
+            db.session.delete({{ models[i]|replace('-', '_') }})
         return None
+{% endfor %}
