@@ -53,3 +53,5 @@ example.db
 .idea/
 clients/*/swagger.json
 clients/*/dist
+
+*.DS_STORE

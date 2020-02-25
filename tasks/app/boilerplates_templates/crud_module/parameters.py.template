@@ -17,15 +17,7 @@ class Create{{ model_name }}Parameters(PostFormParameters, schemas.Detailed{{ mo
         pass
 
 
-class Patch{{ model_name }}DetailsParameters(PatchJSONParameters):
-    # pylint: disable=abstract-method,missing-docstring
-    OPERATION_CHOICES = (
-        PatchJSONParameters.OP_REPLACE,
-    )
-
-    PATH_CHOICES = tuple(
-        '/%s' % field for field in (
-            {{ model_name }}.title.key,
-        )
-    )
+class Patch{{ model_name }}DetailsParameters(Create{{ model_name }}Parameter):
+     class Meta(Create{{ model_name }}Parameter.Meta):
+        pass
 {% endfor %}

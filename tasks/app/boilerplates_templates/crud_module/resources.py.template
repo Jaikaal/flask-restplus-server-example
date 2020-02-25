@@ -10,6 +10,7 @@ import logging
 from flask_login import current_user
 from flask_restplus_patched import Resource
 from flask_restplus._http import HTTPStatus
+from marshmallow.compat import iteritems
 
 from app.extensions import db
 from app.extensions.api import Namespace, abort
@@ -24,7 +25,7 @@ from .models import {{ model_names|join(', ') }}
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
 api = Namespace('{{ module_namespace }}', description="{{ module_title }}")  # pylint: disable=invalid-name
 
-{% for i in range(model_names|count) %} {% set model_name = model_names[i] %}
+{% for i in range(model_names|count) %}{% set model_name = model_names[i] %}
 @api.route('/{% if i > 0 %}{{ models[i] }}{% endif %}')
 @api.login_required(oauth_scopes=['{{ module_namespace }}:read'])
 class {{ model_name.replace(' ', '') }}s(Resource):
@@ -60,13 +61,13 @@ class {{ model_name.replace(' ', '') }}s(Resource):
         return {{ models[i]|replace('-', '_') }}
 
 
-@api.route('/{%if i>0 %}{{ models[i] }}/{% endif %}<int:{{ models[i] }}_id>')
+@api.route('/{%if i>0 %}{{ models[i]|replace('-', '_') }}/{% endif %}<int:{{ models[i]|replace('-', '_') }}_id>')
 @api.login_required(oauth_scopes=['{{ module_namespace }}:read'])
 @api.response(
     code=HTTPStatus.NOT_FOUND,
     description="{{ model_name }} not found.",
 )
-@api.resolve_object_by_model({{ model_name }}, '{{ models[i] }}')
+@api.resolve_object_by_model({{ model_name }}, '{{ models[i]|replace('-', '_') }}')
 class {{ model_name }}ByID(Resource):
     """
     Manipulations with a specific {{ model_name }}.
@@ -92,7 +93,8 @@ class {{ model_name }}ByID(Resource):
                 db.session,
                 default_error_message="Failed to update {{ model_name }} details."
             ):
-            parameters.Patch{{ model_name }}DetailsParameters.perform_patch(args, obj={{ models[i]|replace('-', '_') }})
+            for key, value in iteritems(args):
+                setattr({{ models[i]|replace('-', '_') }}, key, value)
             db.session.merge({{ models[i]|replace('-', '_') }})
         return {{ models[i]|replace('-', '_') }}
 
